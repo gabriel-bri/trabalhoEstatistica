@@ -1,3 +1,5 @@
+# Generalização da Solução: 
+# Permutação da distribuição dos números / Número de vértices * número de faces que cada vértice pode exergar 
 import permutar as p
 
 
