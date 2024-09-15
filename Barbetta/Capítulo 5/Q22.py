@@ -1,20 +1,28 @@
-import scipy.stats as stats
 import numpy as np
+from scipy.stats import poisson, binom
 
-# Dados fornecidos
-p = 0.0002  # Probabilidade de erro em um único bit
-n = 10000   # Número de bits transmitidos
+# Taxa média de defeitos
+lambda_defeitos = 0.05 * 6  # 0.05 defeitos/m² em uma área de 6 m²
 
-# Taxa média de erros lambda
-lambda_ = n * p
+# a) Probabilidade de não haver falhas
+P_X_0 = poisson.pmf(0, lambda_defeitos)
 
-# Cálculo da probabilidade de ter mais de 4 erros
-# P(X > 4) = 1 - P(X <= 4)
-# P(X <= 4) é a soma das probabilidades de ter 0, 1, 2, 3 e 4 erros
-probabilidade_menor_ou_igual_4 = stats.poisson.cdf(4, lambda_)
+# b) Probabilidade de haver mais de uma falha
+P_X_1 = poisson.cdf(1, lambda_defeitos)
+P_X_gt_1 = 1 - P_X_1
 
-# Probabilidade de mais de 4 erros
-probabilidade_mais_de_4 = 1 - probabilidade_menor_ou_igual_4
+# c) Probabilidade de pelo menos 4 barcos não apresentarem defeito
+# Probabilidade de um barco não ter falhas
+p_no_falhas = P_X_0
+
+# Usando a distribuição binomial
+n_barcos = 5
+k_minimo = 4
+P_no_falhas_4 = binom.pmf(k_minimo, n_barcos, p_no_falhas)
+P_no_falhas_5 = binom.pmf(n_barcos, n_barcos, p_no_falhas)
+P_no_falhas_4_ou_mais = P_no_falhas_4 + P_no_falhas_5
 
 # Resultados
-print(f"Probabilidade de que mais de quatro bits sejam recebidos com erro: {probabilidade_mais_de_4:.4f}")
+print(f"Probabilidade de não haver falhas: {P_X_0:.4f}")
+print(f"Probabilidade de haver mais de uma falha: {P_X_gt_1:.4f}")
+print(f"Probabilidade de pelo menos 4 barcos não apresentarem defeito: {P_no_falhas_4_ou_mais:.4f}")
